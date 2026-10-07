@@ -304,3 +304,15 @@ All significant technology decisions are documented as ADRs in [`docs/decisions/
 Before proposing a technology change, read the relevant ADR. Understand the context and consequences that were already considered.
 
 To change an architecture decision: create a new ADR, document the new context, the new decision, and the migration path. Get explicit approval before making changes.
+
+---
+
+## Local Development
+
+For all local development workflows, use the root-level Makefile.
+
+The canonical commands are:
+- `make setup` — Idempotent environment bootstrap (creates `.env` files, installs dependencies).
+- `make dev` — Starts the complete application stack locally via tmux.
+
+For a complete guide, see [`docs/workflows/local-development.md`](docs/workflows/local-development.md).
