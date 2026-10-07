@@ -1,0 +1,57 @@
+# Go
+server/bin/
+server/*.exe
+server/*.test
+server/vendor/
+*.o
+*.a
+*.so
+
+# Node / JavaScript
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# Expo / React Native
+.expo/
+android/
+ios/
+*.ipa
+*.apk
+*.aab
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# IDE & editors
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+*.out
+*.prof
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/

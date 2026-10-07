@@ -1,0 +1,18 @@
+{
+  "name": "gameclan",
+  "version": "0.0.1",
+  "private": true,
+  "description": "GameClan.hub — social multiplayer gaming platform monorepo",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "echo 'No build script configured yet'",
+    "lint": "echo 'No lint script configured yet'",
+    "test": "echo 'No test script configured yet'"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
