@@ -1,0 +1,66 @@
+name: Database
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  migrations:
+    name: Migration Validation
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: gameclan_test
+          POSTGRES_USER: gameclan
+          POSTGRES_PASSWORD: gameclan_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify PostgreSQL is reachable
+        env:
+          PGPASSWORD: gameclan_test
+        run: |
+          psql -h localhost -U gameclan -d gameclan_test -c "SELECT 1" \
+            && echo "PostgreSQL is reachable and accepting connections."
+
+      - name: Count migration files
+        id: check_migrations
+        run: |
+          count=$(find server/migrations -name "*.sql" | wc -l | tr -d ' ')
+          echo "migration_count=$count" >> "$GITHUB_OUTPUT"
+          echo "Found $count migration file(s) in server/migrations/."
+
+      - name: Apply migrations
+        if: steps.check_migrations.outputs.migration_count != '0'
+        env:
+          PGPASSWORD: gameclan_test
+        run: |
+          echo "Applying migrations in sequence..."
+          for f in $(find server/migrations -name "*.sql" | sort); do
+            echo "Applying: $f"
+            psql -h localhost -U gameclan -d gameclan_test -f "$f"
+          done
+          echo "All migrations applied successfully."
+
+      - name: Note — no migrations yet
+        if: steps.check_migrations.outputs.migration_count == '0'
+        run: |
+          echo "No SQL migration files found in server/migrations/."
+          echo "This step will apply and validate migrations automatically when they are added."
+          echo "See docs/workflows/database-migration.md for the migration workflow."

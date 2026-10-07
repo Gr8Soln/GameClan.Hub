@@ -1,5 +1,6 @@
 # Go
 server/bin/
+server/gameclan
 server/*.exe
 server/*.test
 server/vendor/

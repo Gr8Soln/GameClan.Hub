@@ -1,0 +1,61 @@
+name: Server Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    name: Go — Integration Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: gameclan_test
+          POSTGRES_USER: gameclan
+          POSTGRES_PASSWORD: gameclan_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+
+      - name: Run integration tests
+        env:
+          GAMECLAN_DB_HOST: localhost
+          GAMECLAN_DB_PORT: 5432
+          GAMECLAN_DB_NAME: gameclan_test
+          GAMECLAN_DB_USER: gameclan
+          GAMECLAN_DB_PASSWORD: gameclan_test
+          GAMECLAN_REDIS_ADDR: localhost:6379
+        run: go test ./...
